@@ -21,6 +21,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const setLogin = useStore((state) => state.setLogin);
   const setPassword = useStore((state) => state.setPassword);
+  const setToken = useStore((state) => state.setToken);
   const formData = useRef({ email: "", password: "" });
 
   const onSubmit = useCallback(
@@ -31,10 +32,12 @@ export default function LoginForm() {
 
       const result = await signIn(email, password);
       console.log(result);
-      if (!result.isOk) {
+      // setLogin("admin");
+      if (result.isOk) {
         setLoading(false);
-        setLogin(result.login);
-        setPassword(result.password);
+        setLogin(result.data.login);
+        //  setPassword(result.data.token);
+        setToken(result.data.token);
         notify(result.message, "error", 2000);
       }
     },

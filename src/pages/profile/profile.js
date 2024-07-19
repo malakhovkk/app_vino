@@ -3,8 +3,8 @@ import "./profile.scss";
 import Form from "devextreme-react/form";
 import response from "./response";
 // import { shops } from "./shops";
-import * as pricelist from "./response.json";
-import * as shops from "./shops.json";
+// import * as pricelist from "./response.json";
+// import * as shops from "./shops.json";
 import DataGrid, {
   Column,
   Grouping,
@@ -19,16 +19,17 @@ import { ModifiedPriceList } from "../../project/utils/functions";
 import useStore from "../../project/store";
 export default function Profile() {
   const [stocks, setStocks] = useState();
-  const [priceList, setPriceList] = useState();
-  const s = useStore();
+  const [pricelist, setPriceList] = useState();
+  const login = useStore((state) => state.login);
+  const token = useStore((state) => state.token);
   async function GetStocks() {
     //{ запрос {{base_url}}/api/shop/e419c34f-6856-11ea-8298-001d7dd64d88 }
     let data = await axios(
       "http://194.87.239.231:55555/api/shop/e419c34f-6856-11ea-8298-001d7dd64d88",
       {
         headers: {
-          User: `${s.login}`,
-          Authorization: `Bearer ${s.password}`,
+          User: `${login}`,
+          Authorization: `Bearer ${token}`,
         },
         // headers: {
         //   //"content-type": "application/x-www-form-urlencoded",
@@ -45,9 +46,8 @@ export default function Profile() {
       "http://194.87.239.231:55555/api/document/564aec5e-e964-11eb-8407-5800e3fc6bdd",
       {
         headers: {
-          User: "admin",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJleHAiOjE3MjA3MDc4MzAsImlzcyI6IldpbmVTZXJ2ZXIiLCJhdWQiOiJhZG1pbiJ9.45aCF4KH_vSZPdTw6tRsOMjySjOE0YqA-Jo1lgmxQRc",
+          User: `${login}`,
+          Authorization: `Bearer ${token}`,
         },
         // headers: {
         //   //"content-type": "application/x-www-form-urlencoded",
@@ -60,8 +60,10 @@ export default function Profile() {
   }
   useEffect(() => {
     (async function () {
-      setStocks(await GetStocks());
-      setPriceList(await GetPriceList());
+      const stocks = await GetStocks().data;
+      console.log("1: ", stocks);
+      setStocks(stocks);
+      setPriceList(await GetPriceList().data);
     })();
     console.log(">>>>>>");
   }, []);
@@ -69,11 +71,11 @@ export default function Profile() {
   // var products = ReloadPriceList(pricelist);
   // var columns = GetcolumnsPL(pricelist);
   // console.log(columns);
-  // console.log(products);
-
+  console.log(stocks, pricelist);
+  // console.log(stocks && ModifiedColumns(pricelist, stocks));
   return (
     <div>
-      {stocks && (
+      {stocks && pricelist && (
         <DataGrid
           key="id"
           dataSource={ModifiedPriceList(pricelist, stocks)} //() => ReloadPriceList()}
@@ -81,6 +83,7 @@ export default function Profile() {
           showBorders={true}
           focusedRowEnabled={true}
           keyExpr="id"
+          height={800}
           // defaultColumns={columns} //() => GetcolumnsPL()}
           width="100%"
         >

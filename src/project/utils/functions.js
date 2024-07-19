@@ -31,9 +31,11 @@ export function ModifiedColumns(pricelist, stocks) {
     }
     columns.push(Item);
   }
-
+  // console.log(ModifiedColumns(pricelist, stocks));
   // колонки статистики +  остатки номенкратуры на складе
   for (var i = 0; i < stocks.length; i++) {
+    alert("1");
+    console.log(">>> ");
     var items = {
       caption: stocks[i].name,
       align: "center",
@@ -69,13 +71,17 @@ export function ModifiedColumns(pricelist, stocks) {
         },
       ],
     };
-    columns.push(items);
+
+    console.log(">> ", items);
   }
+  console.log(columns);
+  //alert("a");
   return columns;
 }
 
 export function ModifiedPriceList(pricelist, stocks) {
   var products = [];
+  console.log(pricelist);
   for (var i = 0; i < pricelist.productsList.products.length; i++) {
     var productItem = pricelist.productsList.products[i];
     // добавляем в элементы meta, которые описаны в profile
